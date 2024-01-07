@@ -1,6 +1,6 @@
 const { body, validationResult } = require("express-validator");
 
-const validateCreateUser = [
+const validateUser = [
   body("username")
     .isLength({ min: 3 })
     .withMessage("Username must be at least 3 characters")
@@ -21,4 +21,4 @@ const validateCreateUser = [
   },
 ];
 
-module.exports = { validateCreateUser };
+module.exports = { validateUser };

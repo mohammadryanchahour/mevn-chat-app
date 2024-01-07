@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
 require("./src/config/database");
+require("./src/config/redis");
 const app = express();
 
 app.use(cors());
@@ -11,7 +12,9 @@ app.get("/", (req, res) => {
   res.send("Hello World!");
 });
 
+const authRouter = require("./src/routes/auth");
 const userRouter = require("./src/routes/user");
+app.use("/auth", authRouter);
 app.use("/users", userRouter);
 
 // app.use((err, req, res, next) => {

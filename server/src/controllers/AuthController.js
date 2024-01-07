@@ -1,28 +1,49 @@
-const express = require("express");
-const router = express.Router();
 const AuthService = require("../services/AuthService");
+const authService = new AuthService();
 
-//User SignUp
-router.post("/signup", async (req, res) => {
-  try {
-    const { username, email, password } = req.body;
-    const newUser = await AuthService.signup(username, email, password);
-    res.status(201).json(newUser);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
+const AuthController = {
+  authService: authService,
 
-//User login
-router.post("/login", async (req, res) => {
-  try {
-    const { username, password } = req.body;
-    // Call the AuthService method for user login
-    const loggedInUser = await AuthService.login(username, password);
-    res.status(200).json(loggedInUser); // Return user details or tokens
-  } catch (error) {
-    res.status(401).json({ error: "Invalid credentials" });
-  }
-});
+  register: async (req, res) => {
+    try {
+      const userData = req.body;
+      const user = await authService.register(userData);
+      res.status(200).json({ message: "User Registered Successfully!", user });
+    } catch (error) {
+      res
+        .status(500)
+        .json({ message: "Registration failed", error: error.message });
+    }
+  },
 
-module.exports = router;
+  login: async (req, res) => {
+    try {
+      const { username, password } = req.body;
+      const token = await authService.login(username, password);
+      if (token) {
+        res.cookie("token", token, {
+          httpOnly: true,
+          secure: false,
+          expires: new Date(Date.now() + 3600000),
+        });
+      }
+      res.status(200).json({ message: "User Logged In Successfully!", token });
+    } catch (error) {
+      res.status(401).json({ message: "Login failed", error: error.message });
+    }
+  },
+
+  resetPassword: async (req, res) => {
+    try {
+      const { phoneNumber, newPassword } = req.body;
+      await authService.resetPassword(phoneNumber, newPassword);
+      res.status(200).json({ message: "Password reset successful" });
+    } catch (error) {
+      res
+        .status(500)
+        .json({ message: "Password reset failed", error: error.message });
+    }
+  },
+};
+
+module.exports = AuthController;

@@ -16,18 +16,18 @@ const UserController = {
     }
   },
 
-  createUser: async (req, res) => {
-    const userData = req.body;
-    console.log("reached here");
-    try {
-      const newUser = await userService.createUser(userData);
-      res
-        .status(200)
-        .json({ message: "User Created Successfully!", user: newUser });
-    } catch (error) {
-      res.status(500).json({ message: error.message });
-    }
-  },
+  // createUser: async (req, res) => {
+  //   const userData = req.body;
+  //   console.log("reached here");
+  //   try {
+  //     const newUser = await userService.createUser(userData);
+  //     res
+  //       .status(200)
+  //       .json({ message: "User Created Successfully!", user: newUser });
+  //   } catch (error) {
+  //     res.status(500).json({ message: error.message });
+  //   }
+  // },
 
   updateUser: async (req, res) => {
     const userData = req.body;
