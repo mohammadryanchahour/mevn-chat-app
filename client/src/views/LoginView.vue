@@ -95,6 +95,7 @@
         v-model="loginStore.snackbar.show"
         :color="loginStore.snackbar.color"
         :timeout="loginStore.snackbar.timeout"
+        variant="elevated"
         top
         right
       >
