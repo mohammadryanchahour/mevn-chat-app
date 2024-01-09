@@ -1,3 +1,4 @@
+import LoginService from "@/services/LoginService";
 import { defineStore } from "pinia";
 
 export const useLoginStore = defineStore("login", {
@@ -5,6 +6,12 @@ export const useLoginStore = defineStore("login", {
     username: "",
     password: "",
     visible: false,
+    snackbar: {
+      show: false,
+      color: "",
+      message: "",
+      timeout: 5000,
+    },
   }),
 
   actions: {
@@ -30,21 +37,34 @@ export const useLoginStore = defineStore("login", {
       this.visible = false;
     },
 
-    login() {
+    async login() {
       try {
-        // Implement login functionality using your service
-        // For example:
-        // const response = await authService.login(this.username, this.password);
-        // Handle the response as needed, set tokens, etc.
-        console.log("Logging in with username:", this.username);
+        const response = await LoginService.login(this.username, this.password);
+
+        console.log("API Response: ", response);
+
+        if (response && response.token) {
+          localStorage.setItem("token", response.token);
+          this.showSnackbar("Login Successful", "success");
+        }
       } catch (error) {
-        console.error("Login error:", error);
-        // Handle login errors here
+        console.error("API error:", error);
+        this.showSnackbar("Login Failed", "error");
       }
     },
 
     handleSocialLogin(provider) {
       console.log("Logging In...");
+    },
+
+    showSnackbar(message, type) {
+      this.snackbar.message = message;
+      this.snackbar.color = type;
+      this.snackbar.show = true;
+
+      setTimeout(() => {
+        this.snackbar.show = false;
+      }, this.snackbar.timeout);
     },
   },
 });

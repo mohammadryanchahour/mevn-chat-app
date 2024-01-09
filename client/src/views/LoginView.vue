@@ -37,7 +37,7 @@
 
         <v-text-field
           :append-inner-icon="
-            loginStore.visible ? 'mdi-eye-off-outline' : 'mdi-eye-outline'
+            loginStore.visible ? 'mdi-eye-outline' : 'mdi-eye-off-outline'
           "
           :type="loginStore.visible ? 'text' : 'password'"
           v-model="loginStore.password"
@@ -91,44 +91,54 @@
           <v-icon icon="mdi-chevron-right"></v-icon>
         </a>
       </v-card-text>
+      <v-snackbar
+        v-model="loginStore.snackbar.show"
+        :color="loginStore.snackbar.color"
+        :timeout="loginStore.snackbar.timeout"
+        top
+        right
+      >
+        {{ loginStore.snackbar.message }}
+        <template v-slot:action="{ attrs }">
+          <v-btn text v-bind="attrs" @click="loginStore.snackbar.show = false"
+            >Close</v-btn
+          >
+        </template>
+      </v-snackbar>
     </v-card>
   </div>
 </template>
 
 <script>
 import { useLoginStore } from "@/stores/login";
-import LoginService from "@/services/LoginService";
+// import LoginService from "@/services/LoginService";
 
 export default {
   setup() {
     const loginStore = useLoginStore();
-    // console.log(loginStore);
+
+    const login = async () => {
+      await loginStore.login();
+    };
+
+    const showSnackBar = () => {
+      loginStore.showSnackbar();
+    };
 
     const togglePasswordVisibility = () => {
       loginStore.togglePasswordVisibility();
     };
 
-    const login = async () => {
-      try {
-        const response = await LoginService.login(
-          loginStore.username,
-          loginStore.password
-        );
-
-        console.log("API Response:", response);
-
-        if (response && response.token) {
-          localStorage.setItem("token", response.token);
-        }
-      } catch (error) {
-        console.error("API Error:", error);
-      }
+    const handleSocialLogin = (provider) => {
+      loginStore.handleSocialLogin(provider);
     };
 
     return {
       loginStore,
       login,
+      showSnackBar,
       togglePasswordVisibility,
+      handleSocialLogin,
     };
   },
 };
