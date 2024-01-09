@@ -1,8 +1,6 @@
 const mongoose = require("mongoose");
-const passport = require("passport-local-mongoose");
-const Schema = mongoose.Schema;
 
-const userSchema = new Schema(
+const userSchema = new mongoose.Schema(
   {
     username: {
       type: String,
@@ -17,9 +15,7 @@ const userSchema = new Schema(
       unique: true,
     },
     password: { type: String, required: true },
-    avatar: { type: String },
-    bio: { type: String },
-    online: { type: Boolean, default: false },
+    profile: { type: mongoose.Schema.Types.ObjectId, ref: "UserProfile" }, // Reference to UserProfile
   },
   {
     timestamps: true,
