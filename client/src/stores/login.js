@@ -1,3 +1,5 @@
+import { useRouter } from "vue-router";
+
 import LoginService from "@/services/LoginService";
 import { defineStore } from "pinia";
 
@@ -12,6 +14,7 @@ export const useLoginStore = defineStore("login", {
       message: "",
       timeout: 5000,
     },
+    isLoggedIn: false,
   }),
 
   actions: {
@@ -47,9 +50,12 @@ export const useLoginStore = defineStore("login", {
           localStorage.setItem("token", response.token);
           this.showSnackbar("Login Successful", "success");
         }
+        this.isLoggedIn = true;
+        console.log(this.isLoggedIn);
       } catch (error) {
         console.error("API error:", error);
         this.showSnackbar("Login Failed", "error");
+        this.isLoggedIn = false;
       }
     },
 

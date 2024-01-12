@@ -111,8 +111,8 @@
 </template>
 
 <script>
+import ChatSidebarVue from "@/components/Chat/ChatSidebar.vue";
 import { useLoginStore } from "@/stores/login";
-// import LoginService from "@/services/LoginService";
 
 export default {
   setup() {
@@ -120,6 +120,7 @@ export default {
 
     const login = async () => {
       await loginStore.login();
+      // this.$router.push("/chat");
     };
 
     const showSnackBar = () => {

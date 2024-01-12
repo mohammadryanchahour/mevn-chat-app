@@ -1,6 +1,5 @@
 const socketIO = require("socket.io");
-const Message = require("../models/Message"); // Corrected model import path
-const ChatRoom = require("../models/ChatRoom"); // Corrected model import path
+const messageController = require("../controllers/MessageController");
 
 function setupSocketServer(server) {
   const io = socketIO(server);
@@ -8,33 +7,16 @@ function setupSocketServer(server) {
   io.on("connection", (socket) => {
     console.log("New user connected");
 
-    socket.on("disconnect", () => {
-      console.log("User disconnected");
-    });
-
-    socket.on("joinRoom", async ({ roomID }) => {
-      socket.join(roomID);
-      console.log(`User joined room ${roomID}`);
-    });
-
-    socket.on("leaveRoom", async ({ roomID }) => {
-      socket.leave(roomID);
-      console.log(`User left room ${roomID}`);
-    });
-
-    socket.on("sendMessage", async ({ roomID, messageText, senderID }) => {
+    socket.on("sendMessage", async ({ senderID, receiverID, content }) => {
       try {
-        const newMessage = new Message({
-          sender: senderID,
-          chatRoom: roomID,
-          message: messageText,
+        const newMessage = await messageController.sendMessage({
+          senderID: "65953581f6673756d4dc879f",
+          receiverID: "659e298c37f4f81b1b3bac1f",
+          content: "Hi.",
         });
-        console.log(newMessage);
-        await newMessage.save();
-
-        io.to(roomID).emit("newMessage", newMessage);
+        io.to(receiverID).emit("receive message", newMessage);
       } catch (error) {
-        console.error(error);
+        console.error("Error sending message via socket: ", error);
       }
     });
 

@@ -19,8 +19,10 @@ app.get("/", (req, res) => {
 
 const authRouter = require("./src/routes/auth");
 const userRouter = require("./src/routes/user");
+const messageRouter = require("./src/routes/message");
 app.use("/auth", authRouter);
 app.use("/users", userRouter);
+app.use("/messages", messageRouter);
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
