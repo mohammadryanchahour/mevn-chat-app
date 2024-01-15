@@ -59,9 +59,10 @@ Make sure you have Node.js and MongoDB installed on your machine.
    npm install
    ```
 
-4. **Set up the MongoDB database:**
+4. **Set up the .env database:**
 
-   - Create a MongoDB database and update the connection string in `server/.env` file.
+   - Create a MongoDB database and update the connection string in `.env` file.
+   - Also, store a random JWT_SECRET in .env file
 
 5. **Start the server:**
 
