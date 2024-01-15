@@ -1,4 +1,3 @@
-import { nextTick } from "vue";
 import LoginService from "@/services/LoginService";
 import { defineStore } from "pinia";
 
