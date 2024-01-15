@@ -10,7 +10,12 @@ const router = createRouter({
       name: "login",
       component: LoginView,
     },
-    { path: "/chat", component: ChatView, meta: { requiresAuth: true } }, // Add authentication meta if needed
+    {
+      path: "/chat",
+      name: "chat",
+      component: ChatView,
+      // meta: { requiresAuth: true },
+    },
   ],
 });
 

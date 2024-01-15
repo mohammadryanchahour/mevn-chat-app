@@ -111,16 +111,24 @@
 </template>
 
 <script>
-import ChatSidebarVue from "@/components/Chat/ChatSidebar.vue";
 import { useLoginStore } from "@/stores/login";
+import { useRouter } from "vue-router";
 
 export default {
   setup() {
     const loginStore = useLoginStore();
+    const router = useRouter();
 
     const login = async () => {
       await loginStore.login();
-      // this.$router.push("/chat");
+      await nextTick();
+      await new Promise((resolve) => setTimeout(resolve, 1000)); // Adjust the delay as needed
+
+      // Show the snackbar after the delay
+      loginStore.showSnackbar();
+
+      // // Navigate to the /chat route
+      router.push("/chat");
     };
 
     const showSnackBar = () => {
