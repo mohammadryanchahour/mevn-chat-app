@@ -1,9 +1,10 @@
-import LoginService from "@/services/LoginService";
+import RegisterService from "@/services/RegisterService";
 import { defineStore } from "pinia";
 
-export const useLoginStore = defineStore("login", {
+export const useRegisterStore = defineStore("register", {
   state: () => ({
     username: "",
+    phoneNumber: "",
     password: "",
     visible: false,
     snackbar: {
@@ -12,12 +13,16 @@ export const useLoginStore = defineStore("login", {
       message: "",
       timeout: 5000,
     },
-    isLoggedIn: false,
+    isRegistered: false,
   }),
 
   actions: {
     setUsername(username) {
       this.username = username;
+    },
+
+    setPhoneNumber(phoneNumber) {
+      this.phoneNumber = phoneNumber;
     },
 
     setPassword(password) {
@@ -32,21 +37,24 @@ export const useLoginStore = defineStore("login", {
       this.visible = !this.visible;
     },
 
-    async login() {
+    async register() {
       try {
-        const response = await LoginService.login(this.username, this.password);
+        const response = await RegisterService.register(
+          this.username,
+          this.phoneNumber,
+          this.password
+        );
 
         console.log("API Response: ", response);
 
-        if (response && response.token) {
-          localStorage.setItem("token", response.token);
-          this.showSnackbar("Login Successful", "success");
-          this.isLoggedIn = true;
+        if (response) {
+          this.showSnackbar("User Registered Successfully!", "success");
+          this.isRegistered = true;
         }
       } catch (error) {
         console.error("API error:", error);
-        this.showSnackbar("Login Failed", "error");
-        this.isLoggedIn = false;
+        this.showSnackbar("Registration Failed", "error");
+        this.isRegistered = false;
       }
     },
 

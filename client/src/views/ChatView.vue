@@ -1,6 +1,16 @@
 <template>
-  <v-container fluid>
-    <ChatSidebar></ChatSidebar>
+  <v-container class="full-height" fluid>
+    <v-row>
+      <!-- Chat Sidebar -->
+      <v-col cols="3">
+        <ChatSidebar></ChatSidebar>
+      </v-col>
+
+      <!-- Chat Box -->
+      <v-col cols="9">
+        <ChatBox></ChatBox>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 
@@ -21,5 +31,8 @@ export default {
 </script>
 
 <style>
-/* Add any additional styling or adjustments as needed */
+.full-height {
+  height: 100vh;
+  overflow: hidden;
+}
 </style>

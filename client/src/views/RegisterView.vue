@@ -9,10 +9,10 @@
     >
       <div class="text-username text-medium-emphasis">Account</div>
 
-      <v-form @submit.prevent="login">
+      <v-form @submit.prevent="register">
         <v-text-field
           id="username"
-          v-model="loginStore.username"
+          v-model="registerStore.username"
           name="username"
           density="compact"
           placeholder="Enter your username"
@@ -20,35 +20,42 @@
           variant="outlined"
         ></v-text-field>
 
+        <div class="text-phone text-medium-emphasis d-flex align-center">
+          Phone Number
+        </div>
+
+        <vue-tel-input
+          name="phone"
+          density="compact"
+          variant="outlined"
+          v-model="registerStore.phoneNumber"
+          mode="international"
+        ></vue-tel-input>
+
+        <br />
+        <!-- Add line break for spacing -->
+
         <div
           class="text-password text-medium-emphasis d-flex align-center justify-space-between"
         >
           Password
-
-          <a
-            class="text-caption text-decoration-none text-green"
-            href="#"
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            Forgot password?
-          </a>
         </div>
 
         <v-text-field
           :append-inner-icon="
-            loginStore.visible ? 'mdi-eye-outline' : 'mdi-eye-off-outline'
+            registerStore.visible ? 'mdi-eye-outline' : 'mdi-eye-off-outline'
           "
-          :type="loginStore.visible ? 'text' : 'password'"
-          v-model="loginStore.password"
+          :type="registerStore.visible ? 'text' : 'password'"
+          v-model="registerStore.password"
           density="compact"
           placeholder="Enter your password"
           prepend-inner-icon="mdi-lock-outline"
-          :prepend-inner-icon-color="loginStore.visible ? 'primary' : ''"
+          :prepend-inner-icon-color="registerStore.visible ? 'primary' : ''"
           variant="outlined"
           @click:append-inner="togglePasswordVisibility"
         ></v-text-field>
 
+        <br />
         <v-btn
           type="submit"
           block
@@ -57,7 +64,7 @@
           size="large"
           variant="tonal"
         >
-          Log In
+          Register
         </v-btn>
         <div class="social-login d-flex justify-center align-center">
           <v-btn
@@ -79,29 +86,20 @@
           <!-- Add buttons for other social platforms as needed -->
         </div>
       </v-form>
-
-      <v-card-text class="text-center">
-        <a
-          class="text-green text-decoration-none"
-          href="#"
-          rel="noopener noreferrer"
-          target="_blank"
-        >
-          Don't have an account? Register
-          <v-icon icon="mdi-chevron-right"></v-icon>
-        </a>
-      </v-card-text>
       <v-snackbar
-        v-model="loginStore.snackbar.show"
-        :color="loginStore.snackbar.color"
-        :timeout="loginStore.snackbar.timeout"
+        v-model="registerStore.snackbar.show"
+        :color="registerStore.snackbar.color"
+        :timeout="registerStore.snackbar.timeout"
         variant="elevated"
         top
         right
       >
-        {{ loginStore.snackbar.message }}
+        {{ registerStore.snackbar.message }}
         <template v-slot:action="{ attrs }">
-          <v-btn text v-bind="attrs" @click="loginStore.snackbar.show = false"
+          <v-btn
+            text
+            v-bind="attrs"
+            @click="registerStore.snackbar.show = false"
             >Close</v-btn
           >
         </template>
@@ -111,39 +109,39 @@
 </template>
 
 <script>
-import { useLoginStore } from "@/stores/login";
+import { useRegisterStore } from "@/stores/register";
 import { useRouter } from "vue-router";
 
 export default {
   setup() {
-    const loginStore = useLoginStore();
+    const registerStore = useRegisterStore();
     const router = useRouter();
 
-    const login = async () => {
-      await loginStore.login();
+    const register = async () => {
+      await registerStore.register();
       // // Navigate to the /chat route
-      if (loginStore.isLoggedIn) {
-        router.push("/chat");
+      if (registerStore.isRegistered) {
+        router.push("/verify");
       } else {
-        console.log("Not Logged in");
+        console.log("Not Registered");
       }
     };
 
     const showSnackBar = () => {
-      loginStore.showSnackbar();
+      registerStore.showSnackbar();
     };
 
     const togglePasswordVisibility = () => {
-      loginStore.togglePasswordVisibility();
+      registerStore.togglePasswordVisibility();
     };
 
     const handleSocialLogin = (provider) => {
-      loginStore.handleSocialLogin(provider);
+      registerStore.handleSocialLogin(provider);
     };
 
     return {
-      loginStore,
-      login,
+      registerStore,
+      register,
       showSnackBar,
       togglePasswordVisibility,
       handleSocialLogin,
@@ -151,3 +149,5 @@ export default {
   },
 };
 </script>
+
+<style></style>

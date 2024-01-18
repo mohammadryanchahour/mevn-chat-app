@@ -1,97 +1,79 @@
-<!-- ChatComponent.vue -->
 <template>
-  <v-card class="mx-auto" outlined dark>
-    <!-- Display messages -->
+  <v-card>
+    <v-card-title>Chat Box</v-card-title>
     <v-card-text>
-      <v-list :key="messages.length">
-        <!-- Messages go here -->
-        <v-list-item v-for="message in messages" :key="message.id">
-          <v-list-item-content>
-            <v-row
-              :class="
-                message.sender === 'You' ? 'justify-end' : 'justify-start'
-              "
-            >
-              <v-card
-                :class="
-                  message.sender === 'You'
-                    ? 'message-sender'
-                    : 'message-receiver'
-                "
-              >
-                <v-card-text>{{ message.text }}</v-card-text>
-              </v-card>
-            </v-row>
-          </v-list-item-content>
-        </v-list-item>
-      </v-list>
+      <div v-for="message in messages" :key="message.id">
+        {{ message.text }}
+      </div>
     </v-card-text>
-  </v-card>
-
-  <!-- Input area for sending messages -->
-  <v-card class="mx-auto py-auto mt-3" outlined dark>
-    <v-card-text>
-      <v-row align="center">
-        <v-col cols="9">
-          <v-text-field
-            v-model="newMessage"
-            @keyup.enter="sendMessage"
-            placeholder="Type your message..."
-            dense
-          ></v-text-field>
-        </v-col>
-        <v-col cols="3">
-          <v-btn @click="sendMessage" color="success" dark>Send</v-btn>
-        </v-col>
-      </v-row>
-    </v-card-text>
+    <v-card-actions>
+      <v-text-field
+        v-model="newMessage"
+        label="Type your message"
+        @keyup.enter="sendMessage"
+      />
+      <v-btn @click="sendMessage">Send</v-btn>
+    </v-card-actions>
   </v-card>
 </template>
 
 <script>
-import { ref } from "vue";
-import { useChatStore } from "@/stores/Chat/chatBox"; // Adjust the path based on your project structure
+import { defineComponent, ref, onMounted } from "vue";
+import { useChatStore } from "@/stores/Chat/chatBox";
+import io from "socket.io-client";
 
-export default {
-  setup() {
-    const chatStore = useChatStore();
-    const messages = chatStore.messages;
-    const newMessage = ref("");
-
-    const sendMessage = () => {
-      if (newMessage.value.trim() !== "") {
-        chatStore.addMessage({ sender: "You", text: newMessage.value });
-        newMessage.value = "";
-      }
-      console.log("newMessage");
+export default defineComponent({
+  name: "ChatBox",
+  data() {
+    return {
+      newMessage: "",
     };
-
-    return { messages, newMessage, sendMessage };
   },
-};
+  computed: {
+    messages() {
+      return useChatStore().messages;
+    },
+  },
+  methods: {
+    sendMessage() {
+      if (this.newMessage.trim() === "") return;
+
+      const chatStore = useChatStore();
+
+      // Emit the message to the server through Socket.io
+      socket.emit("chatMessage", {
+        id: Date.now(),
+        text: this.newMessage,
+      });
+
+      // Add the message to the local store
+      chatStore.addMessage({
+        id: Date.now(),
+        text: this.newMessage,
+      });
+
+      this.newMessage = "";
+    },
+  },
+  setup() {
+    // Connect to the Socket.io server
+    const socket = io("http://localhost:3000");
+    console.log("error");
+
+    // Listen for incoming messages and update the local store
+    socket.on("chatMessage", (message) => {
+      const chatStore = useChatStore();
+      chatStore.addMessage(message);
+    });
+
+    // Clean up the socket connection when the component is unmounted
+    onMounted(() => {
+      socket.on("disconnect", () => {
+        console.log("Socket disconnected");
+      });
+    });
+
+    return { socket };
+  },
+});
 </script>
-
-<style scoped>
-/* Vuetify utility classes for ChatBox */
-.message-sender {
-  background-color: #4caf50; /* Green color for sender's message */
-  color: white; /* Text color for sender's message */
-  border-radius: 15px; /* Add border-radius for rounded corners */
-  padding: 8px; /* Add padding for spacing */
-}
-
-.message-receiver {
-  background-color: #2196f3; /* Blue color for receiver's message */
-  color: white; /* Text color for receiver's message */
-  border-radius: 15px; /* Add border-radius for rounded corners */
-  padding: 8px; /* Add padding for spacing */
-}
-
-.text-right {
-  text-align: right;
-}
-
-.text-left {
-  text-align: left;
-}
-</style>

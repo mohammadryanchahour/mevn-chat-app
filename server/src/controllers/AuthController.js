@@ -8,10 +8,10 @@ const AuthController = {
     try {
       const userData = req.body;
       const user = await authService.register(userData);
-      res.status(200).json({ message: "User Registered Successfully!", user });
+      res.status(201).json({ message: "User Registered Successfully!", user });
     } catch (error) {
       res
-        .status(500)
+        .status(400)
         .json({ message: "Registration failed", error: error.message });
     }
   },
@@ -40,7 +40,7 @@ const AuthController = {
       res.status(200).json({ message: "Password reset successful" });
     } catch (error) {
       res
-        .status(500)
+        .status(400)
         .json({ message: "Password reset failed", error: error.message });
     }
   },
